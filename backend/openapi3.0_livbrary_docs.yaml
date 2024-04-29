@@ -1,0 +1,570 @@
+openapi: '3.0.2'
+info:
+  title: Library API
+  description: API for managing library resources and user accounts.
+  version: 1.0.0
+servers:
+  - url:  "http://127.0.0.1:5000"
+    description: Library API server
+security:
+  - bearerAuth: []  # JWT Bearer token authentication
+
+paths:
+  # User Management
+  /loginuser:
+    post:
+      summary: Login user
+      description: Allows users to login with their username and password.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The user's username.
+                password:
+                  type: string
+                  description: The user's password.
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT access token
+                  role:
+                    type: string
+                    description: User's role (e.g., admin, user)
+        '401':
+          description: Invalid credentials or unauthorized access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+  /signup:
+    post:
+      summary: Create new user
+      description: Allows users to register for a new account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The user's full name.
+                username:
+                  type: string
+                  description: The user's username.
+                email:
+                  type: string
+                  description: The user's email address.
+                password:
+                  type: string
+                  description: The user's password.
+                roles:
+                  type: string
+                  description: User's requested role (e.g., admin, user)
+                avatarid:  # Assuming avatar refers to an ID for an avatar image
+                  type: integer
+                  description: ID of the user's chosen avatar image.
+      responses:
+        '200':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        '400':
+          description: Bad request (e.g., missing fields, duplicate username)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+
+  /users/all:
+    get:
+      summary: Get all users (Admin only)
+      description: Retrieves a list of all users in the system.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized access (Requires admin role)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+  /users:
+    get:
+      summary: Get current user information
+      description: Returns the details of the currently logged-in user.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized access (Requires valid token)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+    
+
+
+  /users/{username}:
+    get:
+      summary: Get user by username (Admin or same user only)
+      description: Retrieves a specific user by their username.
+      security:
+      - bearerAuth: []
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+          description: The username of the user to retrieve.
+      responses:
+        '200':
+          description: User information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized access (Requires admin role or same user)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+        '404':
+          description: User not found
+
+    patch:
+      summary: Update user information
+      description: Allows users to update their profile details.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Updated user name (optional).
+                email:
+                  type: string
+                  description: Updated user email (optional).
+                avatarid:
+                  type: integer
+                  description: Updated user avatar ID (optional).
+      responses:
+        '200':
+          description: User details updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        '401':
+          description: Unauthorized access (Requires valid token)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+    delete:
+      summary: Delete user account
+      description: Allows users to delete their own account.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User account deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        '401':
+          description: Unauthorized access (Requires valid token)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+
+  # Dashboard
+  /dashboard:
+    get:
+      summary: Get user dashboard data
+      description: Retrieves user-specific data for the dashboard.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+                  streak:
+                    type: integer
+                    description: User's current reading streak.
+                  avatar:
+                    type: string
+                    description: User's avatar image URL.
+                  notes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Note'
+        '401':
+          description: Unauthorized access (Requires valid token)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+
+  # Books
+  /books/all:
+    get:
+      summary: Get all books
+      description: Retrieves a list of all books in the system.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+        '401':
+          description: Unauthorized access (Requires valid token)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+
+  /books/{book_id}:
+    get:
+      summary: Get book by ID
+      description: Retrieves a specific book by its ID.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: book_id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the book to retrieve.
+      responses:
+        '200':
+          description: Book information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'  # Reference the Book schema
+        '401':
+          description: Unauthorized access (Requires valid token)
+        '404':
+          description: Book not found
+
+
+  /books:
+    post:
+      summary: Add a new book (Admin only)
+      description: Allows admins to add new books to the system.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The book's name.
+                author:
+                  type: string
+                  description: The book's author.
+                genre:
+                  type: string
+                  description: The book's genre.
+                location:
+                  type: string
+                  description: The book's location (e.g., shelf number).
+                cover:
+                  type: string
+                  description: URL of the book's cover image (optional).
+      responses:
+        '200':
+          description: Book added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        '401':
+          description: Unauthorized access (Requires admin role)
+        '400':
+          description: Bad request (e.g., missing fields)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message
+
+    patch:
+      summary: Update book information (Admin only)
+      description: Allows admins to update details of existing books.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: book_id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the book to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Updated book name (optional).
+                author:
+                  type: string
+                  description: Updated book author (optional).
+                genre:
+                  type: string
+                  description: Updated book genre (optional).
+                location:
+                  type: string
+                  description: Updated book location (optional).
+                cover:
+                  type: string
+                  description: Updated book cover image URL (optional).
+      responses:
+        '200':
+          description: Book information updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        '401':
+          description: Unauthorized access (Requires admin role)
+        '404':
+          description: Book not found
+    delete:
+      summary: Delete a book (Admin only)
+      description: Allows admins to remove books from the system.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: book_id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the book to delete.
+      responses:
+        '200':
+          description: Book deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        '401':
+          description: Unauthorized access (Requires admin role)
+        '404':
+          description: Book not found
+
+  # Genres
+  /genre:
+    get:
+      summary: Get all genres
+      description: Retrieves a list of all book genres in the system.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of genres
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Genre'
+        '401':
+          description: Unauthorized access (Requires valid token)
+# Additional components can be added here
+
+# Define schemas for the data models used in the API responses
+# (Replace with your actual model definitions)
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The user's unique identifier.
+        name:
+          type: string
+          description: The user's full name.
+        username:
+          type: string
+          description: The user's username for login.
+        email:
+          type: string
+          description: The user's email address.
+        roles:
+          type: array
+          items:
+            type: string
+          description: The user's roles (e.g., admin, user).
+        avatarid:
+          type: integer
+          description: ID of the user's chosen avatar image.
+        # Add other user properties as needed
+
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The book's unique identifier.
+        name:
+          type: string
+          description: The book's title.
+        author:
+          type: string
+          description: The book's author.
+        genre:
+          type: string
+          description: The book's genre.
+        location:
+          type: string
+          description: The book's location (e.g., shelf number).
+        cover:
+          type: string
+          description: URL of the book's cover image (optional).
+        # Add other book properties as needed
+
+    Note:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The note's unique identifier.
+        content:
+          type: string
+          description: The text content of the note.
+        # Add other note properties as needed
+
+    Genre:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The genre name.
+        # Add other genre properties as needed

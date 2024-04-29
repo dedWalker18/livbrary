@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <style>
+        html {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: auto;
+            background: #465454;
+        }
+
+        body {
+            margin: 70px 50px 70px 50px;
+        }
+
+        .title {
+            text-align: center;
+            color: #39038c;
+        }
+
+        .heading {
+            color: #39038c;
+            text-decoration: underline;
+        }
+
+        @media print {
+            .new-page {
+                page-break-before: always;
+            }
+
+            .keep-together {
+                page-break-inside: avoid;
+            }
+
+            .break-before {
+                page-break-before: always;
+            }
+
+            .break-after {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">
+        <img src="backend/static/logo_livbrary.png" style="width: 60px; height: 60px" alt="logo.png">
+        <br>
+        <u>Today's News Headlines</u>
+    </h1>
+    <p style="text-align: right" class="mr-2"><u>DATE: {{ today }}</u></p>
+    <span class="ml-2">Helloo, User.</span>
+    <br><br>
+    <p class="ml-2">These are some of the current news headlines in your region.</p>
+    <br><br>
+
+  {% for each in article %}
+
+    <img src="static/logo_livbrary.png" style="width: 60px; height: 60px" alt="logo.png">
+    <table class="table table-striped">
+      <thead>
+          <tr>
+              <th scope="col">#</th>
+              <th scope="col">Key</th>
+              <th scope="col">Value</th>
+          </tr>
+          </thead>
+          <tbody> 
+              {% for key, value in each.items() %}
+              <tr>
+                  <th scope="row"></th>
+                  <td><h4>{{ key }}</h4></td>
+                  <td>{{ value }}</td>
+              </tr>
+              {% endfor %}
+              <br><br>
+              <br><br>
+              <br><br>
+
+            </tbody>
+        </table>
+    {% endfor %}
+
+    <div class="break-after"></div><br><br>
+
+  
+    <img src="logo_livbrary.png" style="width: 60px; height: 60px" alt="logo.png"><br>
+
+    <h2 style="text-align: center;">END OF REPORT</h2>  </body>
+</html>

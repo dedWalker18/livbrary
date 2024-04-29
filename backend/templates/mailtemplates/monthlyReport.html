@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <style>
+        html {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: auto;
+            background: #96e7e7;
+        }
+
+        body {
+            margin: 70px 50px 70px 50px;
+        }
+
+        .title {
+            text-align: center;
+            color: #39038c;
+        }
+
+        .heading {
+            color: #39038c;
+            text-decoration: underline;
+        }
+
+        @media print {
+            .new-page {
+                page-break-before: always;
+            }
+
+            .keep-together {
+                page-break-inside: avoid;
+            }
+
+            .break-before {
+                page-break-before: always;
+            }
+
+            .break-after {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">
+        <img src="logo_livbrary.png" style="width: 60px; height: 60px" alt="logo.png">
+        <br>
+        <u>MONTHLY REPORT</u>
+    </h1>
+    <p style="text-align: right"><u>DATE: {{ today }}</u></p>
+    <span>Helloo, {{ username }}</span>
+    <br><br>
+    <p>Monthly report for the month of {{ month }}.</p>
+    <div class="break-after"></div><br><br>
+
+    <img src="logo_livbrary.png" style="width: 60px; height: 60px" alt="logo.png">
+    <h1 class="heading">Account Info</h1>  <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Key</th>
+            <th scope="col">Value</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for key, value in account_details.items() %}
+            <tr>
+                <th scope="row"></th>
+                <td>{{ key }}</td>
+                <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="break-after"></div><br><br>
+
+    <img src="logo_livbrary.png" style="width: 60px; height: 60px" alt="logo.png"><br>
+    <h2 class="heading">BookShelf</h2>
+
+    {% if book_details | length > 0 %}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">Book Name</th>
+            <th scope="col">Genre</th>
+            <th scope="col">Author</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for book in book_details %}
+        <tr>
+            <td>{{ book.name }}</td>
+            <td>{{ book.genre_name }}</td>
+            <td>{{ book.author }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h4> No Books Found!! Login to Add!! </h4>
+    {% endif %}
+
+    <div class="break-after"></div><br><br>
+
+    <img src="logo_livbrary.png" style="width: 60px; height: 60px" alt="logo.png"><br>
+    <h2 class="heading">BookShelf</h2>
+
+    {% if activity | length > 0 %}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Activity</th>
+            <th scope="col">Time Stamp</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for each in activity %}
+        <tr>
+            <th scope="row"></th>
+            <td>{{ each.activity }}</td>
+            <td>{{ each.timestamp }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h4> No Books Found!! Login to Add!! </h4>
+    {% endif %}
+
+    <div class="break-after"></div><br><br>
+
+    <img src="logo_livbrary.png" style="width: 60px; height: 60px" alt="logo.png"><br>
+
+    <h2 style="text-align: center;">END OF REPORT</h2>  </body>
+</html>
