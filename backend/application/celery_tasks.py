@@ -98,7 +98,7 @@ def generate_pdf_news(today, template):
 
 @celery_inst.task()
 def daily_news():
-    api_key = "6a6ccbefef614b54b09223054f573599"
+    api_key = ""                        ##Add Your API KEY FOR NEWS API
     resopnse = requests.get("https://newsapi.org/v2/top-headlines?country=IN&apiKey=" + api_key)
     resopnse = resopnse.json()
 
