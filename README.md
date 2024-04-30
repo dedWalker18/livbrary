@@ -60,7 +60,7 @@
     * Vue.js 2 - Modern JavaScript framework for a dynamic and interactive user interface.
     * Bootstrap - Popular CSS framework for responsive design.
     * Jinja2 - Template engine for server-side rendering.
-    * Axios/Fetch - HTTP libraries for seamless communication between frontend and backend.
+    * Axios/Fetch - HTTP libraries for seamless communication between the frontend and the backend.
     * Matplotlib - Python library for data visualization (charts and analytics).
 * Security:
     * HTTPS enforced using self-signed certificates for secure communication.
@@ -76,13 +76,13 @@
       git clone https://github.com/dedWalker18/livbrary.git
    ```
 
-3.  Install Prerequisites
+2.  Install Prerequisites
 
    ```
-      pip install -r requirement.txt
+      pip install -r requirements.txt
    ```
 
-5. Navigate to Backend and run the following command in a terminal. (certificates optional)
+3. Navigate to Backend and run the following command in a terminal. (certificates optional)
 
 ```
    flask run --host=0.0.0.0 --debug
@@ -90,15 +90,7 @@
    flask run --host=0.0.0.0 --debug --cert=cert.pem --key=key.pem
 ```
 
-6. Navigate to Backend and run the following command in a terminal
-   
-```
-   npm I
-
-   npm run serve
-```
-
-8.  Run Celery and Connect to a Redis-Server. Run each command in a separate terminal.
+4.  Run Celery and Connect to a Redis-Server. Run each command in a separate terminal.
    
    ```
       redis-server
@@ -108,8 +100,18 @@
       celery -A app.celery beat --loglevel=info
    ```
 
-8. You can use Mailhog inside docker to test mail client.
-   Alternatively, you can use fastmail or other service.
+5. Navigate to Frontend and run the following command in a separate terminal.
+   
+```
+   npm I
+
+   npm run serve
+```
+
+
+
+6. You can use Mailhog inside docker to test the mail client.
+   Alternatively, you can use FastMail or other services.
 
 ```
    docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
