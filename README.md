@@ -103,7 +103,7 @@
 5. Navigate to Frontend and run the following command in a separate terminal.
    
 ```
-   npm I
+   npm i
 
    npm run serve
 ```
